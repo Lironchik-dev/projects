@@ -1,0 +1,41 @@
+{
+  "hotkey": "ctrl+shift+space",
+  "language": "he",
+  "model_size": "large-v3",
+  "recording_mode": "toggle",
+  "custom_dictionary": {
+    "קלוד": "Claude",
+    "פייתון": "Python",
+    "ג'יפיטי": "GPT",
+    "ג'י פי טי": "GPT"
+  },
+  "filler_words": {
+    "he": [
+      "אה",
+      "אמ",
+      "אממ",
+      "כאילו",
+      "יעני"
+    ],
+    "en": [
+      "um",
+      "uh",
+      "uhh",
+      "umm",
+      "like"
+    ],
+    "ru": [
+      "ну",
+      "это",
+      "как"
+    ]
+  },
+  "remove_filler_words": true,
+  "use_custom_dictionary": true,
+  "feedback": {
+    "sound": true,
+    "tray_icon_color": true,
+    "screen_indicator": false,
+    "overlay_window": false
+  }
+}
