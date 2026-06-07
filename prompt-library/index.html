@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ספריית הפרומפטים של לירון המלך</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-logo"><span class="brand-letter">L</span></div>
+        <div class="brand-text">
+          <h1>ספריית הפרומפטים של לירון המלך</h1>
+          <p>אוסף אישי של פרומפטים שימושיים</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="add-prompt" class="btn btn-primary btn-sm" title="הוסף פרומפט חדש">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <span>פרומפט חדש</span>
+        </button>
+        <button id="export-json" class="icon-btn" title="ייצוא ל-JSON" aria-label="ייצוא">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </button>
+        <button id="theme-toggle" class="icon-btn" title="החלף בין כהה לבהיר" aria-label="החלף ערכת נושא">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="container hero">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input id="search" type="text" placeholder="חיפוש לפי כותרת, תיאור, תגית או תוכן..." autocomplete="off" />
+        <button id="search-clear" class="search-clear" aria-label="נקה חיפוש" hidden>×</button>
+      </div>
+
+      <nav id="filters" class="filters" aria-label="סינון לפי תת-קטגוריה"></nav>
+    </div>
+  </header>
+
+  <main class="container main">
+    <div id="results-meta" class="results-meta"></div>
+    <section id="grid" class="grid" aria-live="polite"></section>
+    <div id="empty-state" class="empty-state" hidden>
+      <div class="empty-icon">🔍</div>
+      <h2>לא נמצאו פרומפטים</h2>
+      <p>נסה לשנות את החיפוש או לבחור תת-קטגוריה אחרת.</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>נוצר לשימוש אישי על ידי <strong>לירון ויינר</strong> 👑</p>
+    </div>
+  </footer>
+
+  <div id="modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="document">
+      <header class="modal-head">
+        <div class="modal-head-text">
+          <span id="modal-tag" class="badge"></span>
+          <h2 id="modal-title"></h2>
+          <p id="modal-desc"></p>
+        </div>
+        <button class="icon-btn" data-close aria-label="סגור">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </header>
+      <div class="modal-body">
+        <pre id="modal-content"></pre>
+      </div>
+      <footer class="modal-foot">
+        <button id="modal-copy" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span>העתק פרומפט</span>
+        </button>
+        <button id="modal-share" class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          <span>שתף</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <div id="form-modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="form-title">
+    <div class="modal-backdrop" data-close-form></div>
+    <div class="modal-card form-card" role="document">
+      <header class="modal-head">
+        <div class="modal-head-text">
+          <h2 id="form-title">פרומפט חדש</h2>
+          <p id="form-subtitle">מלא את השדות כדי לשמור פרומפט חדש בספרייה</p>
+        </div>
+        <button class="icon-btn" data-close-form aria-label="סגור">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </header>
+      <form id="prompt-form" class="modal-body form-body">
+        <label class="field">
+          <span class="field-label">כותרת *</span>
+          <input id="f-title" type="text" required maxlength="120" placeholder="לדוגמה: סיכום מאמר ארוך" />
+        </label>
+        <label class="field">
+          <span class="field-label">תת-קטגוריה *</span>
+          <select id="f-subcategory" required></select>
+        </label>
+        <label class="field">
+          <span class="field-label">תיאור קצר</span>
+          <input id="f-description" type="text" maxlength="200" placeholder="משפט אחד שמסביר למה הפרומפט שימושי" />
+        </label>
+        <label class="field">
+          <span class="field-label">תגיות (מופרדות בפסיקים)</span>
+          <input id="f-tags" type="text" placeholder="כתיבה, סיכום, מאמרים" />
+        </label>
+        <label class="field">
+          <span class="field-label">תוכן הפרומפט *</span>
+          <textarea id="f-content" required rows="10" placeholder="הדבק כאן את הפרומפט המלא..."></textarea>
+        </label>
+        <div class="form-foot">
+          <button type="button" id="form-delete" class="btn btn-danger" hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path></svg>
+            <span>מחק</span>
+          </button>
+          <div class="form-foot-end">
+            <button type="button" class="btn btn-ghost" data-close-form>ביטול</button>
+            <button type="submit" class="btn btn-primary">שמור</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
